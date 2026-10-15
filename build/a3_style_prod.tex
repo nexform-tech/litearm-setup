@@ -1,0 +1,17 @@
+% ===== [仅产品手册] 防孤行阈值提高（排版在 a3_layout 之后，覆盖其 120pt 默认）=====
+% 产品手册 4.5/4.6 标题后紧跟大图浮体，110~130pt 阈值仍会被顶成页末孤标题；
+% 实测 160pt 可将标题与内容同页且页数保持 18。开发手册保持 120pt（28 页）。
+\makeatletter
+\setlength{\aifc@orphanreserve}{175pt}
+\makeatother
+% ===== [仅产品手册] 表格 → A3 产品手册风格：正文字号 + 疏朗行距 ≈21pt =====
+% 追加在 a3_layout.tex 之后。a3_layout 先注册的 \small 钩子会先执行，
+% 此处再用 \normalsize 覆盖回正文字号，并把 \arraystretch 放大到 1.3，
+% 使单行表格行距 ≈ 21pt（16.3pt × 1.3），与 A3 产品手册表格一致。
+% （软件开发手册不含本文件，表格仍用小号密排，与其 A3 开发手册参考一致。）
+\AtBeginEnvironment{longtable}{\normalsize\renewcommand{\arraystretch}{1.3}}
+\AtEndEnvironment{longtable}{\renewcommand{\arraystretch}{1}}
+\AtBeginEnvironment{table}{\normalsize\renewcommand{\arraystretch}{1.3}}
+\AtEndEnvironment{table}{\renewcommand{\arraystretch}{1}}
+\AtBeginEnvironment{tabular}{\renewcommand{\arraystretch}{1.3}}
+\AtEndEnvironment{tabular}{\renewcommand{\arraystretch}{1}}

@@ -1,0 +1,140 @@
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt
+
+\usepackage{caption}
+\usepackage{etoolbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{colortbl}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+% 行距 ≈ 1.5×正文（正文 11pt → 基线约 16.5pt，与 A3 一致）
+\linespread{1.2}
+\setlength{\parskip}{5pt}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{4em}
+\raggedbottom
+% 段落拆页防孤行：禁止一页顶部只余段落末行（widow）或一页底部只有段落首行（club），
+% 避免出现“术支持。”孤行字等；CJK 拆行同样受此约束。
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+
+% ===== 标题：章 14 / 节 12 / 小节~10.9，思源宋体加粗（A3 实测值）=====
+% 编号由 LaTeX 自动给出（目录才可“编号独立成列”对齐 A3），格式与参考一致。
+\titleformat{\section}{\fontsize{14.3}{20}\selectfont\bfseries}{\thesection}{0.35em}{}
+\titleformat{\subsection}{\fontsize{12}{16}\selectfont\bfseries}{\thesubsection}{0.35em}{}
+\titleformat{\subsubsection}{\fontsize{10.9}{15}\selectfont\bfseries}{\thesubsubsection}{0.35em}{}
+\titleformat{\paragraph}{\fontsize{10.9}{15}\selectfont\bfseries}{\theparagraph}{0.35em}{}
+% 标题前后留白对齐 A3 参考（实测视觉留白：小节/小小节 上方≈28pt、下方≈18.6pt）
+\titlespacing*{\section}{0pt}{8pt}{13pt}
+\titlespacing*{\subsection}{0pt}{21pt}{14pt}
+\titlespacing*{\subsubsection}{0pt}{21pt}{14pt}
+\titlespacing*{\paragraph}{0pt}{10pt}{6pt}
+% 正文标题编号需到第 4 级（如 1.3.3.1）；目录仅列到第 3 级（tocdepth=3，下方设置）
+\setcounter{secnumdepth}{4}
+% 标题防孤行：标题若落在页末某阈值内，先分页再排，避免标题成为页末孤行。
+% 阈值按手册分流：开发手册默认 120pt（保持 28 页；附录章开篇标题除外）；
+% 产品手册经实测提高到 160pt，防止“标题＋后随大图浮体”被顶成页末孤标题。
+\makeatletter
+\newlength{\aifc@orphanreserve}
+\setlength{\aifc@orphanreserve}{120pt}
+\newcommand{\aifc@needheadspace}{%
+  \ifdim\pagetotal>\dimexpr\pagegoal-\aifc@orphanreserve\relax
+    % \pagetotal 在“刚溢出、页面还没换出去”的瞬间是**旧页**的累计高度（会把已经
+    % 判给下一页的那几行也算进来）。这时再 \newpage 就会把新页在几行之内截断，
+    % 留下一整页空白。\pagetotal 不小于 \pagegoal 说明当前页本来就放不下了，
+    % 分页由页面构造器自然处理，这里不要再插一脚。
+    \ifdim\pagetotal<\pagegoal
+      \newpage
+    \fi
+  \fi}
+\pretocmd{\section}{\aifc@needheadspace}{}{\relax}
+\pretocmd{\subsection}{\aifc@needheadspace}{}{\relax}
+\pretocmd{\subsubsection}{\aifc@needheadspace}{}{\relax}
+\makeatother
+\setcounter{tocdepth}{3}
+\renewcommand{\contentsname}{目录}
+% ===== 目录页 =====
+% 章级目录条目列宽对齐 A3：编号左缘在 x43（缩进 0em），标题自 x55 起（编号盒 1.1em）；
+% 二级条目沿用 article 类默认缩进 1.5em、编号盒 2.3em（实测编号 x59、标题 x84）。
+\makeatletter
+% 目录条目间距：章级与二级**用同一个 6pt**，让全篇条目等距。
+% 房式原件只在章级给 11.3pt、二级不给，条目间距分两档（章前 ≈27pt）；
+% 本教程章少、小节也少，分档留白会让目录看起来忽松忽紧，故两级统一。
+% 实测：不给 \addvspace 的条目间距 = 15.58pt（纯基线距），加了 6pt → 21.56pt。
+% 要还原 SE 观感，把下面两个 6pt 分别改回 11.3pt 与 0pt（删掉 \addvspace）。
+% 编号列 0em 缩进 + 1.1em 编号盒 → 编号 x43、标题 x55。
+\renewcommand*\l@section{\addvspace{6pt}\@dottedtocline{1}{0em}{1.1em}}
+\renewcommand*\l@subsection{\addvspace{6pt}\@dottedtocline{2}{1.5em}{2.3em}}
+\makeatother
+% “目录”标题下方留白（首行再叠加大节分组留白后总距 ≈48.7pt）
+\let\aifcstdTOC\tableofcontents
+\renewcommand{\tableofcontents}{%
+  \begingroup
+    \titlespacing*{\section}{0pt}{10pt}{23pt}%
+    \aifcstdTOC
+  \endgroup}
+
+% ===== 图注：小号居中 "图N. 说明" =====
+\DeclareCaptionLabelFormat{a3}{图#2. }
+\DeclareCaptionFont{a3}{\fontsize{8.5}{11}\selectfont}
+\renewcommand{\figurename}{图}
+\captionsetup[figure]{font={a3,rm},labelfont={a3,rm},labelformat=a3,labelsep=none,skip=3pt}
+
+% ===== 表格：booktabs 灰色横线（A3：无竖线、灰线、上下粗中间细）=====
+% 灰白斑马纹底色：正文第 2、4、6…行 \rowcolor{zebra}（zebra.py 注入）
+\definecolor{zebra}{gray}{0.937}
+\renewcommand{\heavyrulewidth}{1.6pt}
+\renewcommand{\lightrulewidth}{0.55pt}
+\arrayrulecolor[gray]{0.6}
+\AtBeginEnvironment{longtable}{\small}
+\AtBeginEnvironment{table}{\small}
+\AtBeginEnvironment{verbatim}{\footnotesize}
+\AtBeginEnvironment{Shaded}{\footnotesize}
+
+% ===== 页眉页脚（仿 A3）=====
+\fancypagestyle{frontmatter}{%
+  \fancyhf{}%
+  \fancyfoot[L]{NEXFORM ROBOTICS}%
+  \fancyfoot[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+}
+\fancyhf{}
+\fancyhead[R]{@DOCSHORT@}
+\fancyfoot[L]{NEXFORM ROBOTICS}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\pagestyle{fancy}
+\AtBeginDocument{\hypersetup{pdftitle={@DOCSHORT@}}}
+% 目录/正文超链接改为黑色（去除默认红色链接色）
+\AtBeginDocument{\hypersetup{colorlinks=true,linkcolor=black,urlcolor=black,citecolor=black,filecolor=black}}
+
+% ===== 图片控制（居中、统一宽度上限）=====
+% 版心实测 520.7pt × 651.6pt（a4paper, left=15mm right=12mm top=38mm bottom=30mm）。
+% 全篇图统一按 0.70\linewidth = 364.5pt 宽，高上限 0.52\textheight = 338.8pt。
+% 0.70 是实测出来的折中点：正文照片已统一裁成约 4:3 横构图（见
+% build/compose_figures.py 的 CROPS），1.33:1 的图在此宽度下高约 273pt，
+%   - 两图 + 两条图注 ≈ 574pt，还能剩 ~78pt 排正文 → 一页放得下两组，最省页数；
+%   - 0.62\linewidth（322.8pt 宽／242pt 高）更省页但图明显偏小，读接口文字吃力；
+%   - 0.82\linewidth（427pt 宽／320pt 高）图最大，但一页只放得下一张图，
+%     页数从 15 页涨到 19 页、页底留白翻倍，反而不均匀。
+% 高上限 338.8pt 对 4:3 图不生效（273 < 339），保留是为了防止日后换入更高的图时
+% 撑破版心；更宽的整图（立柱、脚轮、遥操那三张 2.2~2.4:1）本就按宽度定尺寸。
+% 代价：就地排版（见下）时整张图放不进当前页剩余空间就会整页下移、在页底留白。
+\AtBeginDocument{\setkeys{Gin}{width=0.70\linewidth,height=0.52\textheight,keepaspectratio}}
+% 图就地排版（float 宏包的 H）：图紧跟其说明文字，用户可边看图边照做。
+% 房式原件设的是 tp（图只放页顶/独立图页）——那会让图浮到所属小节标题之前，
+% 安装类文档里对照起来容易错行，故此处偏离。改回 tp 即可还原房式行为。
+\makeatletter\AtBeginDocument{\def\fps@figure{H}}\makeatother
+
+% ===== 强制使用简体中文字形 SourceHan Serif SC（Noto Serif CJK SC 单地区文件），
+% 避免系统 ttc 默认取 JP 面；正文为 11pt（与 A3 参考一致）=====
+\setCJKmainfont[Path=/home/qaz/.local/share/fonts/NotoSerifSC/,
+  UprightFont=NotoSerifCJKSC-Regular.otf,
+  BoldFont=NotoSerifCJKSC-Bold.otf]{LITEARM CJK SC}
+

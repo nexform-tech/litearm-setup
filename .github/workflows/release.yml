@@ -8,6 +8,9 @@
 # Add the `publish` job from examples/publish.yml when the repository publishes to
 # a registry, and the `package` job from examples/package.yml when it ships build
 # artifacts. Both are independent siblings of `release`: add or delete them freely.
+#
+# The `package` job below is this repository's: it attaches the built guide, and the
+# installation video, to every release.
 name: Release
 
 on:
@@ -35,3 +38,50 @@ jobs:
     # semantic-release's 1.0.0 first release disables the bootstrap explicitly.
     # with:
     #   initial-version: ""
+
+  # Attach the two artifacts the release is for. The PDF is in the tree, so
+  # packaging it is a copy. The video is not: at 73 MB it would be carried in the
+  # clone by everyone who only wants the guide, so it was uploaded to a release by
+  # hand and is copied forward from the newest release that has it. Without that
+  # step a new release would silently drop the video from /releases/latest, which
+  # is what the README points readers at.
+  package:
+    needs: release
+    if: needs.release.outputs.new_tag != ''
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write # attach artifacts to the GitHub release
+    env:
+      VERSION: ${{ needs.release.outputs.new_tag }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GUIDE: LITEARM-SE机械臂安装教程.pdf
+      # Asset names are deliberately ASCII: GitHub strips non-ASCII characters from
+      # them, so uploading the in-tree name would land as `LITEARM-SE.pdf` and any
+      # later lookup by the name written here would never match. The names also carry
+      # no version, because the release tag is already the version.
+      GUIDE_ASSET: LITEARM-SE-installation-guide.pdf
+      VIDEO_ASSET: LITEARM-SE-installation-video.mp4
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Stage the guide
+        run: |
+          mkdir -p dist
+          cp "$GUIDE" "dist/$GUIDE_ASSET"
+
+      - name: Carry the installation video forward
+        # Nothing to carry on the first run after this job is added, which is why an
+        # absent predecessor is not an error; anything else is.
+        run: |
+          id=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+                 --jq ".[] | select(any(.assets[]; .name == \"$VIDEO_ASSET\")) | .id" | head -1)
+          if [ -z "$id" ]; then
+            echo "::warning::no earlier release carries $VIDEO_ASSET; this release will not have it"
+          else
+            gh api "repos/$GITHUB_REPOSITORY/releases/assets/$id" \
+              -H 'Accept: application/octet-stream' > "dist/$VIDEO_ASSET"
+          fi
+
+      - name: Attach artifacts to the release
+        run: gh release upload "$VERSION" dist/* --clobber

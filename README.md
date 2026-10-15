@@ -3,12 +3,12 @@
 [English](README.md) | [简体中文](README.zh-CN.md)
 
 The installation documentation for the LiteArm robotic manipulator series: the guide
-as a PDF, the installation video, and the Markdown source and build pipeline that
-produce them. Read it before you unpack the arm — bringing the hardware up needs
-nothing from the SDK, from ROS, or from a host machine.
+as a PDF, a link to the installation video, and the Markdown source and build
+pipeline that produce the guide. Read it before you unpack the arm — bringing the
+hardware up needs nothing from the SDK, from ROS, or from a host machine.
 
 The guide is written in Chinese, because that is the language the document ships in
-with the product and the language the installation video is narrated in.
+with the product.
 
 ## The guide
 
@@ -40,11 +40,10 @@ makes mandatory and which one it lets you skip.
 
 ## The installation video
 
-Six minutes, 960×544, walked through on a real arm. It is a release asset rather
-than a file in this repository, because at 73 MB it would be carried in the clone
-by everyone who only wants the PDF:
+《【硬核开箱】NEXFORM新元体LITEARM SE七轴机械臂来了！》 is published on Bilibili
+rather than shipped with this repository:
 
-<https://github.com/nexform-tech/litearm-setup/releases/latest>
+<https://www.bilibili.com/video/BV17LJy6zEAh/>
 
 ## Building the PDF
 

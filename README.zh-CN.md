@@ -12,7 +12,7 @@ Markdown 源文件与构建流程。请在开箱前先读它——硬件上电�
 
 | 文件 | 说明 |
 | --- | --- |
-| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | 教程正文，14 页，即随产品交付的版本 |
+| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | 教程正文，15 页，即随产品交付的版本 |
 | [`LITEARM-SE机械臂安装教程.md`](LITEARM-SE机械臂安装教程.md) | 源文件。要改就改它，不要改 PDF |
 | [`build/`](build/) | 把 Markdown 变成 PDF 的构建流程 |
 
@@ -99,7 +99,7 @@ litearm-setup/
 │   ├── check_doc.py                # 测试脚本
 │   └── README.md                   # 构建流程的详细说明
 └── images/
-    ├── fig01-…-fig17….jpg          # 生成物，每张插图一个文件
+    ├── fig01-…-fig19….jpg          # 生成物，每张插图一个文件
     └── parts/                      # 拼成插图的原始照片
 ```
 

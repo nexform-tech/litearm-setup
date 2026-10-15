@@ -14,7 +14,7 @@ with the product and the language the installation video is narrated in.
 
 | File | What it is |
 | --- | --- |
-| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | The guide, 14 pages, as shipped |
+| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | The guide, 15 pages, as shipped |
 | [`LITEARM-SE机械臂安装教程.md`](LITEARM-SE机械臂安装教程.md) | The source. Edit this one, never the PDF |
 | [`build/`](build/) | The pipeline that turns the Markdown into the PDF |
 
@@ -109,7 +109,7 @@ litearm-setup/
 │   ├── check_doc.py                # the test suite
 │   └── README.md                   # the pipeline in detail, in Chinese
 └── images/
-    ├── fig01-…-fig17….jpg          # generated, one per figure
+    ├── fig01-…-fig19….jpg          # generated, one per figure
     └── parts/                      # the photographs the figures are built from
 ```
 

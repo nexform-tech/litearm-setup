@@ -1,0 +1,13 @@
+% 只有中文版要的部分，由 build/build.sh 追加在 a3_layout.tex + a3_style_prod.tex 之后。
+% 英文版不追加本文件：那里的正文是拉丁字母，既不需要中文断行规则，也不需要 CJK 字体。
+% 追加顺序与原先（这几行还在 a3_layout.tex 里时）一致，中文版排出来逐字节不变。
+
+% XeTeX 的中文断行规则：汉字之间可以任意断行，并允许行末标点挤压。
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt
+
+% ===== 强制使用简体中文字形 SourceHan Serif SC（Noto Serif CJK SC 单地区文件），
+% 避免系统 ttc 默认取 JP 面；正文为 11pt（与 A3 参考一致）=====
+\setCJKmainfont[Path=/home/qaz/.local/share/fonts/NotoSerifSC/,
+  UprightFont=NotoSerifCJKSC-Regular.otf,
+  BoldFont=NotoSerifCJKSC-Bold.otf]{LITEARM CJK SC}

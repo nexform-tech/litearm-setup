@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""把 images/parts/ 下的源图裁切、重画图内标注、必要时横向拼成 images/ 下的整图。
+"""把 images/parts/ 下的源图裁切、重画图内标注、必要时横向拼成整图。
 
+中文版与英文版各出一套成图：中文版写进 images/，英文版写进 images-en/。
 安装教程里的「图 6 / 图 7」由多张照片并排组成；其余为单张。
 为了让 Markdown 每个图只引用一个文件，这里先把它们加工好。
 
 每个图做三件事，顺序固定：裁切（CROPS）-> 重画图内标注（LABELS）-> 拼接（FIGURES）。
+裁切框与拼接方式两个语言共用（照片本来就是同一批），只有标注文字分语言，
+所以 LABELS 按语言分成两份，箭头和擦除框也跟着各自的文字排。
 
 用法：
     python3 build/compose_figures.py
@@ -25,7 +28,11 @@ except ImportError:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PARTS_DIR = os.path.join(ROOT, "images", "parts")
-OUT_DIR = os.path.join(ROOT, "images")
+# 语言 -> 成图目录。两张照片的裁切和拼接是共用的，只有标注文字分语言。
+OUT_DIRS = {
+    "zh": os.path.join(ROOT, "images"),
+    "en": os.path.join(ROOT, "images-en"),
+}
 
 GUTTER = 14  # 分图之间的留白（像素）
 BG = (255, 255, 255)
@@ -86,7 +93,7 @@ CROPS = {
     "fig18-arm-connector.jpg": (0, 31, 832, 656),
 }
 
-# 源图文件名 -> (字号像素, [(擦除旧字框, 新字左上角, 文字, 箭头 起→终)])
+# 源图文件名 -> (字号像素, [(擦除旧字框, 新字左上角, 文字, 箭头 起→终)])，中文版。
 # 全篇图都由 a3_layout.tex 排成 0.70\linewidth = 364.5pt 宽，字号按「成图上的点数」
 # 折回源图像素：px = 8.9 × 成图宽度像素 ÷ 364.5，即 px ≈ 成图宽度px ÷ 41。
 # 8.9pt 略大于图注的 8.5pt，比正文 11pt 小——标注重在能认出来，不该抢正文。
@@ -97,7 +104,7 @@ CROPS = {
 # 擦除框/锚点/箭头都按该源图（裁切后）的分辨率；擦除框填 None 表示那里没有旧字要抹。
 # 改了 a3_layout.tex 的 \setkeys{Gin}{width=...}，这里的 px 必须按新宽度整体重算，
 # 否则标注会跟着图一起被放大或缩小。
-LABELS = {
+LABELS_ZH = {
     # 图 1 机械臂固定于安装底板（箭头指底盘法兰上那颗螺栓，中心约 (675,627)）
     "fig01-arm-on-base.jpg": (32, [
         (None, (60, 790), "M5 螺丝（固定机械臂）", ((430, 800), (660, 638))),
@@ -185,6 +192,85 @@ LABELS = {
     ]),
 }
 
+# 源图文件名 -> (字号像素, [(擦除旧字框, 新字左上角, 文字, 箭头 起→终)])，英文版。
+# 字号、裁切框、拼接方式与中文版完全一致（两张成图要并排看，不能一大一小）；
+# 变的只有文字，以及被更宽的文字顶开的锚点。
+#
+# 拉丁字母比汉字宽得多：同样 31px 的字号下，中文「电源线」三个字 93px，
+# 英文 "Power cable" 要 186px——右边和下边的标注很容易顶出图外（顶出去就被裁掉，
+# annotate() 会为此报一行警告）。所以靠右的锚点（图 14、图 18）比中文版左移了一截，
+# 箭头起点仍留在文字下面，让白描边压掉线头、只露出指向器材的那一段，和中文版一样。
+# 英文标注用同一支 Noto Sans CJK Bold（它的拉丁面来自 Source Sans），
+# 中英两套成图里的标注因此是同一副眉眼，不必再引第二支字体。
+LABELS_EN = {
+    "fig01-arm-on-base.jpg": (32, [
+        (None, (60, 790), "M5 screws (arm mount)", ((430, 800), (660, 638))),
+        (None, (830, 790), "Base plate", ((830, 775), (795, 625))),
+    ]),
+    "fig03-clamp.jpg": (32, [
+        (None, (930, 330), "G-clamps × 2", ((925, 378), (808, 486))),
+    ]),
+    "fig05-control-board.jpg": (31, [
+        (None, (1000, 300), "Fixing screw", ((1070, 360), (1042, 478))),
+    ]),
+    "fig07a-feet.jpg": (26, [
+        ((311, 41, 359, 62), (313, 38), "Foot", None),
+        ((85, 249, 171, 268), (66, 245), "Plate underside", None),
+        # 中文的「M16 孔 × 4」到 x=560 就完了，英文要到 601——只差 5px 就贴边，
+        # 锚点左移 20px 留出余量
+        (None, (400, 92), "M16 holes × 4", ((470, 126), (489, 145))),
+    ]),
+    "fig07b-casters.jpg": (26, [
+        (None, (118, 103), "Caster", ((152, 140), (188, 200))),
+    ]),
+    "fig08-column-base.jpg": (25, [
+        (None, (700, 428), "M10 screws × 8", ((694, 456), (600, 392))),
+    ]),
+    "fig09-top-mount.jpg": (16, [
+        (None, (25, 235), "M6 socket screws × 4", ((62, 272), (196, 392))),
+    ]),
+    "fig10b-extension.jpg": (10, [
+        (None, (12, 8), "M5 screws × 6", ((78, 44), (196, 62))),
+    ]),
+    "fig11-arm-direct.jpg": (31, [
+        (None, (30, 470), "M5 screws × 6", ((215, 500), (505, 445))),
+    ]),
+    "fig12-column-routing.jpg": (31, [
+        (None, (80, 380), "Power cable", ((285, 405), (665, 215))),
+    ]),
+    "fig13-cable-exit.jpg": (31, [
+        (None, (60, 510), "Exits under the column", ((425, 548), (590, 120))),
+    ]),
+    # 图 14 的右标注最吃锚点：中文「关节连接线」5 字 155px，英文 "Joint connector"
+    # 240px，照 1030 摆会写到 1270、离右缘只剩 9px，故左移到 1000。
+    "fig14-arm-direction.jpg": (31, [
+        (None, (40, 300), "Power cable up", ((295, 335), (505, 130))),
+        (None, (1000, 420), "Joint connector", ((1030, 445), (945, 330))),
+    ]),
+    "fig15-power.jpg": (15, [
+        (None, (20, 415), "Power supply", ((72, 405), (95, 300))),
+        (None, (430, 55), "Power cable", ((452, 88), (505, 400))),
+    ]),
+    "fig16-power-output.jpg": (12, [
+        (None, (20, 325), "XT60 output", ((118, 330), (255, 218))),
+    ]),
+    "fig17-controller-board.jpg": (31, [
+        (None, (775, 205), "to the arm's lower port", ((775, 258), (712, 180))),
+        (None, (330, 810), "to the power supply", ((425, 835), (686, 882))),
+        (None, (20, 300), "USB to PC", ((215, 355), (250, 500))),
+    ]),
+    "fig18-arm-connector.jpg": (20, [
+        (None, (620, 520), "Arm's lower port", ((640, 500), (468, 318))),
+    ]),
+    "fig19-electrical-overall.jpg": (32, [
+        (None, (880, 250), "Power supply", ((880, 290), (835, 340))),
+        (None, (40, 390), "Controller board", ((215, 400), (500, 290))),
+        (None, (320, 115), "USB cable", ((352, 146), (336, 224))),
+    ]),
+}
+
+LABELS = {"zh": LABELS_ZH, "en": LABELS_EN}
+
 # 单张图：输出名 -> images/parts/ 下的源图名
 SINGLES = {
     "fig01-arm-on-base.jpg": "fig01-arm-on-base.jpg",
@@ -219,7 +305,7 @@ def _draw_arrow(draw, start, end, width, head):
                   fill=LABEL_FILL, width=width)
 
 
-def annotate(img, px, items):
+def annotate(img, px, items, where=""):
     """抹掉旧标注并按规则重画（只改内存里的这张图，不动源文件）。"""
     boxes = [box for box, _, _, _ in items if box]
     if boxes:
@@ -237,9 +323,16 @@ def annotate(img, px, items):
             _draw_arrow(draw, arrow[0], arrow[1], width, head)
 
     font = ImageFont.truetype(LABEL_FONT, px, index=LABEL_FONT_INDEX)
+    stroke = max(4, px // 8)
     for _, (x, y), text, _ in items:
+        # 写出去的字比图还宽/还高就会被裁掉一截。这里不拦，只报——标注压在照片上，
+        # 少一块只有肉眼看图才发现，而英文标注比中文宽得多，最容易撞上。
+        x1, y1 = draw.textbbox((x, y), text, font=font, stroke_width=stroke)[2:]
+        if x1 > img.width or y1 > img.height:
+            print(f"  警告：{where} 的标注 {text!r} 画到 ({x1}, {y1})，"
+                  f"超出 {img.width}x{img.height}，会被裁掉")
         draw.text((x, y), text, font=font, fill=LABEL_FILL,
-                  stroke_width=max(4, px // 8), stroke_fill=LABEL_HALO)
+                  stroke_width=stroke, stroke_fill=LABEL_HALO)
     return img
 
 # 输出文件名 -> 从左到右组成该图的分图
@@ -257,7 +350,7 @@ FIGURES = {
 }
 
 
-def prepare(name):
+def prepare(name, locale):
     """读源图 -> 裁切 -> 重画标注。裁切按源图原分辨率，标注坐标按裁切后的图。"""
     path = os.path.join(PARTS_DIR, name)
     if not os.path.exists(path):
@@ -265,13 +358,14 @@ def prepare(name):
     img = Image.open(path).convert("RGB")
     if name in CROPS:
         img = img.crop(CROPS[name])
-    if name in LABELS:
-        img = annotate(img, *LABELS[name])
+    items = LABELS[locale].get(name)
+    if items:
+        img = annotate(img, *items, where=f"[{locale}] {name}")
     return img
 
 
-def compose(out_name, part_names):
-    parts = [prepare(name) for name in part_names]
+def compose(out_dir, out_name, part_names, locale):
+    parts = [prepare(name, locale) for name in part_names]
 
     # 以最矮的分图为准统一高度，避免放大导致画质下降
     target_h = min(p.height for p in parts)
@@ -288,26 +382,30 @@ def compose(out_name, part_names):
         canvas.paste(s, (x, 0))
         x += s.width + GUTTER
 
-    dst = os.path.join(OUT_DIR, out_name)
+    dst = os.path.join(out_dir, out_name)
     canvas.save(dst, "JPEG", quality=90)
-    print(f"{out_name}  <=  {' + '.join(part_names)}  ({canvas.width}x{canvas.height})")
+    print(f"[{locale}] {out_name}  <=  {' + '.join(part_names)}"
+          f"  ({canvas.width}x{canvas.height})")
 
 
-def single(out_name, part_name):
+def single(out_dir, out_name, part_name, locale):
     """单张图：裁切 + 重画标注后直接写出。"""
-    img = prepare(part_name)
-    dst = os.path.join(OUT_DIR, out_name)
+    img = prepare(part_name, locale)
+    dst = os.path.join(out_dir, out_name)
     img.save(dst, "JPEG", quality=90, optimize=True)
-    print(f"{out_name}  <=  {part_name}（单张）  ({img.width}x{img.height})")
+    print(f"[{locale}] {out_name}  <=  {part_name}（单张）  ({img.width}x{img.height})")
 
 
 def main():
     if not os.path.isdir(PARTS_DIR):
         sys.exit(f"找不到分图目录：{PARTS_DIR}")
-    for out_name, part_names in FIGURES.items():
-        compose(out_name, part_names)
-    for out_name, part_name in SINGLES.items():
-        single(out_name, part_name)
+    for locale, out_dir in OUT_DIRS.items():
+        os.makedirs(out_dir, exist_ok=True)
+        print(f"{locale} -> {os.path.relpath(out_dir, ROOT)}/")
+        for out_name, part_names in FIGURES.items():
+            compose(out_dir, out_name, part_names, locale)
+        for out_name, part_name in SINGLES.items():
+            single(out_dir, out_name, part_name, locale)
 
 
 if __name__ == "__main__":

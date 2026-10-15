@@ -7,16 +7,24 @@ as a PDF, a link to the installation video, and the Markdown source and build
 pipeline that produce the guide. Read it before you unpack the arm — bringing the
 hardware up needs nothing from the SDK, from ROS, or from a host machine.
 
-The guide is written in Chinese, because that is the language the document ships in
-with the product.
+The guide ships in Chinese, because that is the language the product is delivered in.
+An English edition of the same guide is kept here alongside it.
 
 ## The guide
 
 | File | What it is |
 | --- | --- |
-| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | The guide, 15 pages, as shipped |
-| [`LITEARM-SE机械臂安装教程.md`](LITEARM-SE机械臂安装教程.md) | The source. Edit this one, never the PDF |
+| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | The Chinese guide, 16 pages, as shipped |
+| [`LITEARM-SE机械臂安装教程.md`](LITEARM-SE机械臂安装教程.md) | Its source. Edit this one, never the PDF |
+| [`LITEARM-SE-installation-guide.pdf`](LITEARM-SE-installation-guide.pdf) | The English guide, 17 pages |
+| [`LITEARM-SE-installation-guide.md`](LITEARM-SE-installation-guide.md) | Its source, likewise |
 | [`build/`](build/) | The pipeline that turns the Markdown into the PDF |
+
+The two editions are the same document: the same chapters, the same steps, and the
+same nineteen figures under the same numbers. They differ in more than the prose —
+the labels drawn into the photographs are in the language of the edition they appear
+in, so the compositor writes one set of figures per language and the two sets have to
+be regenerated together.
 
 Six chapters, in the order the work is done — assemble first, connect power and
 communication second, so no cable is pulled or caught while the arm is being
@@ -36,7 +44,8 @@ desktop edge with the mounting base and G-clamps, or assembled onto the column
 stand. Do both and you will have built two mounts.
 
 **Read 1.1 first.** It is a table that says which chapters your mounting choice
-makes mandatory and which one it lets you skip.
+makes mandatory and which one it lets you skip. Chapter titles above are quoted from
+the Chinese edition; the English one has the same six chapters in the same order.
 
 ## The installation video
 
@@ -51,8 +60,8 @@ rather than shipped with this repository:
 bash build/build.sh
 ```
 
-Building rewrites `LITEARM-SE机械臂安装教程.pdf` in the repository root from the
-Markdown source.
+Building rewrites both PDFs in the repository root from their Markdown sources, three
+xelatex passes each.
 
 | Requirement | Notes |
 | --- | --- |
@@ -61,35 +70,41 @@ Markdown source.
 | `python3` | the two post-processing steps in `build/` |
 | Fonts | Noto Serif CJK SC, Noto Sans CJK SC, Lato |
 
-**Do not edit the PDF.** It is generated, and the next build overwrites it. A change
-to the guide lands as two files in one commit — the Markdown and the rebuilt PDF —
-because a PDF that lags its source is the one thing nobody notices in review.
+**Do not edit a PDF.** They are generated, and the next build overwrites them. A
+change to the guide lands as two files in one commit — the Markdown and the rebuilt
+PDF — because a PDF that lags its source is the one thing nobody notices in review.
+Edit the English source only when the change concerns the English wording alone, and
+change its figure set only through `build/compose_figures.py`, so that the two
+editions cannot drift apart.
 
-**The CJK font is addressed by absolute path** in `build/a3_layout.tex`
-(`\setCJKmainfont[Path=/home/qaz/.local/share/fonts/NotoSerifSC/…]`). On a machine
-where the Noto Serif CJK SC single-region files live elsewhere, the build stops with
-a font error; point that `Path=` at your own copy. This is the one step that is not
-portable yet.
+**The CJK font is addressed by absolute path** in `build/a3_cjk.tex`
+(`\setCJKmainfont[Path=/home/qaz/.local/share/fonts/NotoSerifSC/…]`; the Chinese
+edition only, the English one loads no CJK font). On a machine where the Noto Serif
+CJK SC single-region files live elsewhere, the build stops with a font error; point
+that `Path=` at your own copy. This is the one step that is not portable yet.
 
 ## Editing the figures
 
-`images/` is generated. The photographs with their handwritten annotations live in
-`images/parts/`, and `build/compose_figures.py` crops them, redraws the in-image
-labels and stitches the multi-photograph figures together:
+`images/` and `images-en/` are generated. The photographs with their handwritten
+annotations live in `images/parts/`, and `build/compose_figures.py` crops them,
+redraws the in-image labels and stitches the multi-photograph figures together — the
+crops and the stitches are shared by both editions, only the labels differ:
 
 ```bash
 python3 build/compose_figures.py
 ```
 
-Run it after touching anything under `images/parts/`, then rebuild the PDF. Do not
+Run it after touching anything under `images/parts/`, then rebuild both PDFs. Do not
 run it with `python3 -I`: the isolated mode hides the user site-packages and
 `opencv` stops importing.
 
 **The figure files are numbered by position, not by content.** LaTeX numbers the
 captions itself from the order the images appear in the Markdown, so the twentieth
-figure in the document must be `images/fig20-something.jpg`. Renumber a file and the
-caption follows it, while every "see 图 6" in the prose keeps pointing where it did
-before. `build/check_doc.py` is what catches that, and it runs on every pull request:
+figure of an edition must be `images/fig20-something.jpg` in the Chinese one and
+`images-en/fig20-something.jpg` in the English one. Renumber a file and the caption
+follows it, while every "see 图 6" or "see Figure 6" in the prose keeps pointing where
+it did before. `build/check_doc.py` is what catches that — along with the two editions
+drifting apart — and it runs on every pull request:
 
 ```bash
 python3 build/check_doc.py
@@ -99,17 +114,23 @@ python3 build/check_doc.py
 
 ```text
 litearm-setup/
-├── LITEARM-SE机械臂安装教程.md     # the source — edit this
-├── LITEARM-SE机械臂安装教程.pdf    # built by build/build.sh
+├── LITEARM-SE机械臂安装教程.md       # the Chinese source — edit this
+├── LITEARM-SE机械臂安装教程.pdf      # built by build/build.sh
+├── LITEARM-SE-installation-guide.md  # the English source
+├── LITEARM-SE-installation-guide.pdf # built by build/build.sh
 ├── build/                          # pandoc -> LaTeX pipeline, figure compositor
-│   ├── build.sh                    # markdown -> PDF, three xelatex passes
-│   ├── build_docx.py               # the same document as .docx, for figure editing
+│   ├── build.sh                    # markdown -> PDF, three xelatex passes per edition
+│   ├── a3_layout.tex               # the layout, shared; four names are substituted
+│   ├── a3_cjk.tex                  # the CJK font and line-breaking rules (Chinese only)
+│   ├── build_docx.py               # the Chinese document as .docx, for figure editing
 │   ├── compose_figures.py          # crops, annotates and stitches images/parts/
 │   ├── check_doc.py                # the test suite
 │   └── README.md                   # the pipeline in detail, in Chinese
-└── images/
-    ├── fig01-…-fig19….jpg          # generated, one per figure
-    └── parts/                      # the photographs the figures are built from
+├── images/                         # the Chinese edition's figures
+│   ├── fig01-…-fig19….jpg          # generated, one per figure
+│   ├── cover_litearm_*.png         # cover art, shared by both editions
+│   └── parts/                      # the photographs the figures are built from
+└── images-en/                      # the English edition's figures, same file names
 ```
 
 `build/README.md` describes the typesetting decisions in detail — the page geometry,

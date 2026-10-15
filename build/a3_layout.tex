@@ -1,5 +1,11 @@
-\XeTeXlinebreaklocale "zh"
-\XeTeXlinebreakskip = 0pt plus 1pt
+% 中英两份文档共用的排版头。语言相关的只有四处名称与正文中文字体，四处名称在下面
+% 写成占位符，由 build/build.sh 逐份 sed 成本次的取值（占位符的字面写法见该脚本里
+% 的 sed 那一行——这里不重复写，否则 sed 会连注释一起替换掉）：
+%   页眉右端的手册名（PDF 标题也用它）
+%   目录标题：「目录」/「Contents」
+%   图注编号格式：「图#2. 」/「Figure #2. 」
+%   正文里引用图时用的词：「图」/「Figure」
+% 中文专有的断行规则与中文字体在 a3_cjk.tex 里，只对中文版追加。
 
 \usepackage{caption}
 \usepackage{etoolbox}
@@ -56,7 +62,7 @@
 \pretocmd{\subsubsection}{\aifc@needheadspace}{}{\relax}
 \makeatother
 \setcounter{tocdepth}{3}
-\renewcommand{\contentsname}{目录}
+\renewcommand{\contentsname}{@CONTENTSNAME@}
 % ===== 目录页 =====
 % 章级目录条目列宽对齐 A3：编号左缘在 x43（缩进 0em），标题自 x55 起（编号盒 1.1em）；
 % 二级条目沿用 article 类默认缩进 1.5em、编号盒 2.3em（实测编号 x59、标题 x84）。
@@ -79,9 +85,11 @@
   \endgroup}
 
 % ===== 图注：小号居中 "图N. 说明" =====
-\DeclareCaptionLabelFormat{a3}{图#2. }
+% 中文版的「图1.」里那个空格是 xeCJK 自动加的（汉字与拉丁字母之间），
+% 英文版没有这一层，所以英文的编号格式里要自己写一个空格。
+\DeclareCaptionLabelFormat{a3}{@FIGLABEL@}
 \DeclareCaptionFont{a3}{\fontsize{8.5}{11}\selectfont}
-\renewcommand{\figurename}{图}
+\renewcommand{\figurename}{@FIGNAME@}
 \captionsetup[figure]{font={a3,rm},labelfont={a3,rm},labelformat=a3,labelsep=none,skip=3pt}
 
 % ===== 表格：booktabs 灰色横线（A3：无竖线、灰线、上下粗中间细）=====
@@ -132,9 +140,6 @@
 % 安装类文档里对照起来容易错行，故此处偏离。改回 tp 即可还原房式行为。
 \makeatletter\AtBeginDocument{\def\fps@figure{H}}\makeatother
 
-% ===== 强制使用简体中文字形 SourceHan Serif SC（Noto Serif CJK SC 单地区文件），
-% 避免系统 ttc 默认取 JP 面；正文为 11pt（与 A3 参考一致）=====
-\setCJKmainfont[Path=/home/qaz/.local/share/fonts/NotoSerifSC/,
-  UprightFont=NotoSerifCJKSC-Regular.otf,
-  BoldFont=NotoSerifCJKSC-Bold.otf]{LITEARM CJK SC}
+% 正文中文字体、中文断行规则等只对中文版生效的部分见 build/a3_cjk.tex，
+% 由 build/build.sh 追加在本文件之后。
 

@@ -2,11 +2,11 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-LiteArm 系列机械臂的安装文档：以 PDF 形式发布的安装教程、安装视频，以及生成它们的
-Markdown 源文件与构建流程。请在开箱前先读它——硬件上电本身不需要 SDK、不需要 ROS，
-也不需要上位机。
+LiteArm 系列机械臂的安装文档：以 PDF 形式发布的安装教程、安装视频的链接，以及生成
+教程的 Markdown 源文件与构建流程。请在开箱前先读它——硬件上电本身不需要 SDK、不需要
+ROS，也不需要上位机。
 
-教程正文为中文，因为这是随产品发货时的文档语言，也是安装视频的讲解语言。
+教程正文为中文，因为这是随产品发货时的文档语言。
 
 ## 安装教程
 
@@ -35,10 +35,9 @@ Markdown 源文件与构建流程。请在开箱前先读它——硬件上电�
 
 ## 安装视频
 
-6 分钟，960×544，在真实机械臂上完整走了一遍流程。它以 Release 附件的形式发布，而不
-直接放在仓库里——73 MB 的体积会让每个只想下载 PDF 的人都在 clone 时把它拉下来：
+《【硬核开箱】NEXFORM新元体LITEARM SE七轴机械臂来了！》发布在 B 站，不随本仓库发布：
 
-<https://github.com/nexform-tech/litearm-setup/releases/latest>
+<https://www.bilibili.com/video/BV17LJy6zEAh/>
 
 ## 构建 PDF
 

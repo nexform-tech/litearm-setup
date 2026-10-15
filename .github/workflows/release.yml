@@ -55,30 +55,32 @@ jobs:
       VERSION: ${{ needs.release.outputs.new_tag }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GUIDE: LITEARM-SE机械臂安装教程.pdf
-      VIDEO: LITEARM-SE安装视频.mp4
+      # Asset names are deliberately ASCII: GitHub strips non-ASCII characters from
+      # them, so uploading the in-tree name would land as `LITEARM-SE.pdf` and any
+      # later lookup by the name written here would never match. The names also carry
+      # no version, because the release tag is already the version.
+      GUIDE_ASSET: LITEARM-SE-installation-guide.pdf
+      VIDEO_ASSET: LITEARM-SE-installation-video.mp4
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Stage the guide
-        # The asset keeps the filename the repository uses rather than gaining the
-        # version: the release tag is already the version, and the README links to
-        # the file by this name.
         run: |
           mkdir -p dist
-          cp "$GUIDE" dist/
+          cp "$GUIDE" "dist/$GUIDE_ASSET"
 
       - name: Carry the installation video forward
         # Nothing to carry on the first run after this job is added, which is why an
         # absent predecessor is not an error; anything else is.
         run: |
           id=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
-                 --jq ".[] | select(any(.assets[]; .name == \"$VIDEO\")) | .id" | head -1)
+                 --jq ".[] | select(any(.assets[]; .name == \"$VIDEO_ASSET\")) | .id" | head -1)
           if [ -z "$id" ]; then
-            echo "::warning::no earlier release carries $VIDEO; this release will not have it"
+            echo "::warning::no earlier release carries $VIDEO_ASSET; this release will not have it"
           else
             gh api "repos/$GITHUB_REPOSITORY/releases/assets/$id" \
-              -H 'Accept: application/octet-stream' > "dist/$VIDEO"
+              -H 'Accept: application/octet-stream' > "dist/$VIDEO_ASSET"
           fi
 
       - name: Attach artifacts to the release

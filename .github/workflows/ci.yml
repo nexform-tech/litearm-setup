@@ -1,0 +1,43 @@
+# Tests run on pull requests; the release workflow runs on pushes to the default
+# branch. Keeping them apart means a broken release never blocks a pull request,
+# and the reverse.
+#
+# The suite is build/check_doc.py: the guide's figure numbering is derived from the
+# order its images appear in the Markdown, so renumbering a file after the prose
+# has been written breaks a back reference with nothing to show for it. The script
+# is the only thing that catches it. It needs no third-party package, so there is
+# no install step.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true # a superseded pull request run is pointless
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Building the PDF itself is not part of CI: it needs a full TeX Live with
+      # the CJK fonts (about 1 GB) and takes minutes. The document is built
+      # locally with build/build.sh, and the PDF lands in the same commit as the
+      # Markdown change that caused it.
+      - name: Check the guide's figures and back references
+        run: python3 build/check_doc.py

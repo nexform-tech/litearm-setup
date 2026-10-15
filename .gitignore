@@ -1,0 +1,14 @@
+# LaTeX intermediates written by build/build.sh into build/gen/
+build/gen/
+
+# The Word toolchain that build/build_docx.py installs into the repository
+# (python-docx, pypandoc and its bundled pandoc, lxml). It is ~170 MB of
+# third-party code, reproducible from the command in build/README.md.
+build/.tools/
+
+# Word output. The PDF is committed, because it is the document users read;
+# the .docx is a working copy for editing figures, so it is not.
+*.docx
+
+__pycache__/
+*.py[cod]

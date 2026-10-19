@@ -52,15 +52,15 @@ jobs:
     env:
       VERSION: ${{ needs.release.outputs.new_tag }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GUIDE_ZH: LITEARM-SE机械臂安装教程.pdf
-      GUIDE_EN: LITEARM-SE-installation-guide.pdf
+      GUIDE_ZH: LITEARM-SE机械臂使用教程.pdf
+      GUIDE_EN: LITEARM-SE-user-guide.pdf
       # The asset names are deliberately ASCII: GitHub strips non-ASCII characters
       # from asset names, so uploading the Chinese in-tree name would land as
       # `LITEARM-SE.pdf` and any later lookup by the name written here would never
       # match. They carry no version either, because the release tag is already the
       # version — the `-zh`/`-en` suffix is what tells the two editions apart.
-      ASSET_ZH: LITEARM-SE-installation-guide-zh.pdf
-      ASSET_EN: LITEARM-SE-installation-guide-en.pdf
+      ASSET_ZH: LITEARM-SE-user-guide-zh.pdf
+      ASSET_EN: LITEARM-SE-user-guide-en.pdf
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

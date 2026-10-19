@@ -2,27 +2,27 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-LiteArm 系列机械臂的安装文档：以 PDF 形式发布的安装教程、安装视频的链接，以及生成
-教程的 Markdown 源文件与构建流程。请在开箱前先读它——硬件上电本身不需要 SDK、不需要
-ROS，也不需要上位机。
+LiteArm 系列机械臂的开箱与使用文档：以 PDF 形式发布的使用教程、安装视频的链接，以及
+生成教程的 Markdown 源文件与构建流程。请在开箱前先读它——硬件上电本身不需要 SDK、
+不需要 ROS。教程随后还会带读者完成上位机安装、授权激活与首次动作测试。
 
 教程正文为中文，因为这是随产品发货时的文档语言；仓库里同时保留了同一份教程的英文版。
 
-## 安装教程
+## 使用教程
 
 | 文件 | 说明 |
 | --- | --- |
-| [`LITEARM-SE机械臂安装教程.pdf`](LITEARM-SE机械臂安装教程.pdf) | 中文教程正文，16 页，即随产品交付的版本 |
-| [`LITEARM-SE机械臂安装教程.md`](LITEARM-SE机械臂安装教程.md) | 它的源文件。要改就改它，不要改 PDF |
-| [`LITEARM-SE-installation-guide.pdf`](LITEARM-SE-installation-guide.pdf) | 英文教程正文，17 页 |
-| [`LITEARM-SE-installation-guide.md`](LITEARM-SE-installation-guide.md) | 它的源文件，同样改它不改 PDF |
+| [`LITEARM-SE机械臂使用教程.pdf`](LITEARM-SE机械臂使用教程.pdf) | 中文教程正文，20 页，即随产品交付的版本 |
+| [`LITEARM-SE机械臂使用教程.md`](LITEARM-SE机械臂使用教程.md) | 它的源文件。要改就改它，不要改 PDF |
+| [`LITEARM-SE-user-guide.pdf`](LITEARM-SE-user-guide.pdf) | 英文教程正文，22 页 |
+| [`LITEARM-SE-user-guide.md`](LITEARM-SE-user-guide.md) | 它的源文件，同样改它不改 PDF |
 | [`build/`](build/) | 把 Markdown 变成 PDF 的构建流程 |
 
-两份是同一份文档：章节、步骤、19 张图与图号一一对应。差别不只是正文语言——照片里
+两份是同一份文档：章节、步骤、21 张图与图号一一对应。差别不只是正文语言——照片里
 画上去的标注也是各自语言，所以成图按语言出两套，改一套就得两套一起重出。
 
-正文共 6 章，按实际操作的先后顺序排列——先装配、后接电与通信，这样在翻转、对位、
-拧紧机械臂的过程中不会有线缆被扯动或被夹住：
+正文共 7 章，按实际操作的先后顺序排列——先装配、后接电与通信，最后安装上位机软件，
+这样在翻转、对位、拧紧机械臂的过程中不会有线缆被扯动或被夹住：
 
 | # | 章节 | 适用读者 |
 | --- | --- | --- |
@@ -30,8 +30,9 @@ ROS，也不需要上位机。
 | 2 | 开箱清点 | 所有人 |
 | 3 | 桌面固定 | 仅桌面固定方案 |
 | 4 | 立柱安装 | 仅立柱方案 |
-| 5 | 电气连接 | 所有人 |
-| 6 | 安装注意事项 | 所有人 |
+| 5 | 电气连接（含安装注意事项） | 所有人 |
+| 6 | 软件快速上手：安装、激活与使用 | 所有人 |
+| 7 | Q&A：常见问题 | 按需查阅 |
 
 第 3 章与第 4 章是**二选一的两种方案，不是前后两步**：机械臂要么用安装底座加 G 型夹
 固定在桌面边缘，要么装配到立柱上。两个都做，等于装了两套支架。
@@ -72,9 +73,10 @@ Noto Serif CJK SC 的分区文件装在别处，构建会在字体处报错停�
 
 ## 修改插图
 
-`images/` 与 `images-en/` 都是生成物。带手写标注的照片放在 `images/parts/`，由
-`build/compose_figures.py` 负责裁切、重绘照片内的标注文字，并把由多张照片组成的插图
-拼合起来——裁切框与拼法两份共用，只有标注按语言各写一份：
+`images/` 与 `images-en/` 里的图 1–19 是生成物，图 20、21 是原样放入的界面截图。
+带手写标注的照片放在 `images/parts/`，由 `build/compose_figures.py` 负责裁切、重绘
+照片内的标注文字，并把由多张照片组成的插图拼合起来——裁切框与拼法两份共用，只有
+标注按语言各写一份：
 
 ```bash
 python3 build/compose_figures.py
@@ -84,8 +86,8 @@ python3 build/compose_figures.py
 `python3 -I` 运行它：隔离模式会屏蔽用户的 site-packages，`opencv` 会导入失败。
 
 **插图文件是按位置编号的，不是按内容。** LaTeX 会按图片在 Markdown 中出现的顺序自动
-给图题编号，所以一份文档里的第 20 张图必须是 `images/fig20-…jpg`（中文版）或
-`images-en/fig20-…jpg`（英文版）。重命名一个文件，图题
+给图题编号，所以一份文档里的第 20 张图必须是 `images/fig20-…`（中文版）或
+`images-en/fig20-…`（英文版）。重命名一个文件，图题
 会跟着它变，而正文里每一处「见图 6」仍然指着原来的位置。`build/check_doc.py` 就是用来
 发现这种不一致的——以及两份文档的图走偏——它在每个 pull request 上都会跑：
 
@@ -97,10 +99,10 @@ python3 build/check_doc.py
 
 ```text
 litearm-setup/
-├── LITEARM-SE机械臂安装教程.md       # 中文源文件——改它
-├── LITEARM-SE机械臂安装教程.pdf      # 由 build/build.sh 构建
-├── LITEARM-SE-installation-guide.md  # 英文源文件
-├── LITEARM-SE-installation-guide.pdf # 由 build/build.sh 构建
+├── LITEARM-SE机械臂使用教程.md       # 中文源文件——改它
+├── LITEARM-SE机械臂使用教程.pdf      # 由 build/build.sh 构建
+├── LITEARM-SE-user-guide.md          # 英文源文件
+├── LITEARM-SE-user-guide.pdf         # 由 build/build.sh 构建
 ├── build/                          # pandoc -> LaTeX 流程与插图合成脚本
 │   ├── build.sh                    # Markdown -> PDF，每份三遍 xelatex
 │   ├── a3_layout.tex               # 排版头，两份共用，其中四处名称按语言替换
@@ -111,6 +113,7 @@ litearm-setup/
 │   └── README.md                   # 构建流程的详细说明
 ├── images/                         # 中文版的插图
 │   ├── fig01-…-fig19….jpg          # 生成物，每张插图一个文件
+│   ├── fig20-…-fig21….png          # 上位机界面截图，原样使用
 │   ├── cover_litearm_*.png         # 封面图，两份共用
 │   └── parts/                      # 拼成插图的原始照片
 └── images-en/                      # 英文版的插图，文件名与中文版相同

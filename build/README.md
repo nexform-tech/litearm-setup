@@ -1,8 +1,7 @@
 # 构建说明
 
-教程的**源文件**是根目录的两个 md：`LITEARM-SE机械臂安装教程.md`（中文，随产品交付的
-那一份）与 `LITEARM-SE-installation-guide.md`（英文）。以后修改内容只改 md，再重新
-生成 PDF。
+教程的**源文件**是根目录的两个 md：`LITEARM-SE机械臂使用教程.md`（中文，随产品交付的
+那一份）与 `LITEARM-SE-user-guide.md`（英文）。以后修改内容只改 md，再重新生成 PDF。
 
 ## 重新生成 PDF
 
@@ -21,7 +20,7 @@ bash build/build.sh
 
 ## 英文版
 
-英文版是中文版的逐句对照：章节、步骤、19 张图与图号完全一致，图号不重排，所以两份
+英文版是中文版的逐句对照：章节、步骤、21 张图与图号完全一致，图号不重排，所以两份
 文档里的「图 14」与「Figure 14」指的是同一张图。`build/check_doc.py` 把这一点当断言
 查——两份引用的图文件名与顺序必须相同。
 
@@ -29,7 +28,7 @@ bash build/build.sh
 
 | 差异 | 中文版 | 英文版 |
 | --- | --- | --- |
-| 排版头里的四处名称 | sed 替换成：册名「LITEARM-SE 机械臂安装教程」、目录标题「目录」、图注格式「图#2. 」、引用图时用的词「图」 | 同一套占位符，换成 `LITEARM-SE Installation Guide` / `Contents` / `Figure #2. ` / `Figure` |
+| 排版头里的四处名称 | sed 替换成：册名「LITEARM-SE 机械臂使用教程」、目录标题「目录」、图注格式「图#2. 」、引用图时用的词「图」 | 同一套占位符，换成 `LITEARM-SE User Guide` / `Contents` / `Figure #2. ` / `Figure` |
 | 中文专有片段 | 追加 `a3_cjk.tex`（中文断行规则 + 正文中文字体，按绝对路径） | 不追加 |
 | pandoc 的 CJK 变量 | 传 `-V CJKmainfont` 等三项 | 不传 |
 
@@ -38,11 +37,9 @@ bash build/build.sh
 「Figure1.」。
 
 英文的图是 `images-en/` 下的另一套成图，文件名与 `images/` 相同，只有图内标注分语言
-（见「图内标注重画」）。封面图 `images/cover_litearm_*.png` 两份共用。
-
-**改造对中文版是零影响，这一点验过**：重构后重跑 `bash build/build.sh`，中文 PDF 与
-改造前逐页渲染比对（`pdftoppm -r 60` + 逐像素比，16 页）差异像素全为 0，页数仍是
-16 页。也就是说这次只改了排版头的组装方式，没动任何排版参数。
+（见「图内标注重画」）。封面图 `images/cover_litearm_*.png` 两份共用。图 20、图 21
+是上位机界面截图，界面语言以截图为准，因此两份共用同一张图（`images-en/` 下是同样的
+两个文件），不重画标注。
 
 ## 重新生成 Word
 
@@ -50,13 +47,10 @@ bash build/build.sh
 python3 build/build_docx.py
 ```
 
-输出根目录的 `LITEARM-SE机械臂安装教程.docx`，供直接用 Word / WPS 编辑插图。
+输出根目录的 `LITEARM-SE机械臂使用教程.docx`，供直接用 Word / WPS 编辑插图。
 
-"> **根目录那份 `LITEARM-SE机械臂安装教程.docx` 是用户给的原始件，不是脚本产物。**
-> 它是这次改版的依据：第 4 章「立柱安装」是用户重写过的（新增步骤 8「立柱内部走线」、
-> 换了安装方向的「注意」、图 11 与图 12 用同一张 image14）。md 与 docx 的
-> **图号并不相同**——docx 的图注只到「图 12」，md 是图 1–图 19、且把 docx 里
-> 两张没配图注的步骤 8 配图各编了一个号。要对照就看图注文字，不要看图号。
+"> **根目录那份 `LITEARM-SE机械臂使用教程.docx` 是脚本每次重新生成的产物，不是原始稿。**
+> 改内容请改 md；直接改 docx 会在下次运行脚本时被覆盖。
 
 依赖已装在 `build/.tools/`（python-docx、pypandoc，pandoc 3.9 随包附带），
 不占用 conda 环境。**注意 `.tools/` 里的 lxml 是 cpython-314 编译的**，
@@ -69,7 +63,7 @@ pip install --target build/.tools python-docx pypandoc_binary
 
 脚本做的事：剥掉只给 LaTeX 用的 `{=latex}` 封面块 → pandoc 转换 →
 重建 Word 封面（logo、产品图、版本行）、套用中文字体与标题样式、
-图注自动编成「图 1…图 19」、表格加灰底表头与细线框、
+图注自动编成「图 1…图 21」、表格加灰底表头与细线框、
 目录字段设为打开时自动刷新。
 
 几个注意点：
@@ -77,9 +71,16 @@ pip install --target build/.tools python-docx pypandoc_binary
 - **不要直接改 docx 再重新生成**，改动会被覆盖。改内容仍改根目录的 md；
   只想插图的话直接在 Word 里编辑即可，不必回头再跑脚本。
 - 图片统一装进 12.9cm × 12.0cm 的框（对齐 LaTeX 的
-  `width=0.70\linewidth, height=0.52\textheight`）。不能改成「只缩不放」：
+  `width=0.70\linewidth, height=0.52\textheight`）。例外是图 20、图 21 两张
+  界面截图：Markdown 里标 `{width=100%}`，Word 端按 `FULL_WIDTH_FIGURES`
+  铺到 15.9cm（A4 默认页边距下的版心宽），PDF 端按 `1.0\linewidth` 排。
+  不能改成「只缩不放」：
   源图 DPI 元数据不一致（`fig06a/b`、`fig08`、`fig10a/b/c` 带 220dpi，其余没有，
   `fig07a/b` 是 0），单向缩小会让各图大小差很多。
+- 命令块（`Source Code` 样式）左缩进 2 字符、行距 1.15，且与上一段之间不留空，
+  只在块下方留段距。Word 端在 `build_docx.py` 的样式设置与
+  `tighten_code_blocks()` 里；PDF 端对应 `a3_layout.tex` 的
+  `\fvset{xleftmargin=2em}` 与 `\AtBeginEnvironment{Shaded}{\vspace{-\parskip}}`。
 - 正文字体用「宋体 / 微软雅黑」而不是 Noto：两者在 Windows 版 Word 上原生存在，
   Linux 上由 fontconfig 映射回 Noto Serif / Sans CJK，两边都不会变成方块。
 - 脚本末尾有 `verify()` 自检，会断言 `w:sectPr` 仍是 `w:body` 的最后一个元素——
@@ -87,15 +88,16 @@ pip install --target build/.tools python-docx pypandoc_binary
 
 ## 章节结构
 
-正文 6 章，按「先机械装配、后电气连接」排序：
+正文 7 章，按「先机械装配、后电气连接、最后软件与答疑」排序：
 
 ```
 1 前言（含 1.1 安装路径指引）      两条安装路径的分流表在这里
 2 开箱清点：确认部件是否齐全
 3 桌面固定：将机械臂稳定固定于桌面   ┐ 二选一
 4 立柱安装：组装立柱底架并装配机械臂 ┘
-5 电气连接：接通供电与通讯（5.1 示意图 / 5.2 接线自检）
-6 安装注意事项
+5 电气连接：接通供电与通讯（5.1 示意图 / 5.2 接线自检 / 5.3 安装注意事项）
+6 软件快速上手：安装、激活与使用（6.1 安装 / 6.2 激活 / 6.3 使用）
+7 Q&A：常见问题
 ```
 
 第 4 章是原第 5、6 章的合并结果——立柱底架组装与机械臂装配本来是同一条连续
@@ -104,7 +106,8 @@ pip install --target build/.tools python-docx pypandoc_binary
 
 原第 7 章「速查表」整章已删除：7.1 图号索引与正文图注重复，7.3 安装路径速查与
 1.1 安装路径指引重复，剩下的 7.2 紧固件速查表也与正文各步骤里写明的螺丝规格
-重复——三块都是冗余。删掉后正文 6 章，末章即第 6 章「安装注意事项」。
+重复——三块都是冗余。现在的结构是：安装注意事项并入第 5 章（5.3），软件快速
+上手为第 6 章，用户视角的 Q&A 独立为第 7 章。
 
 ## 目录
 
@@ -128,7 +131,7 @@ pip install --target build/.tools python-docx pypandoc_binary
 
 `images/`（中文版）与 `images-en/`（英文版）下的图由各自的 Markdown 直接引用，两份的
 文件名与顺序一致。**图号按正文出现顺序编，不是按文件名编**：
-`fig01`–`fig19` 与正文里的「图 1」–「图 19」（英文版「Figure 1」–「Figure 19」）
+`fig01`–`fig21` 与正文里的「图 1」–「图 21」（英文版「Figure 1」–「Figure 21」）
 一一对应，**调整章节顺序后必须重排图号**，
 否则图注（LaTeX 自动编号）会和正文里「见**图 N**」的回指对不上。
 
@@ -153,6 +156,8 @@ pip install --target build/.tools python-docx pypandoc_binary
 | 图 17 | `fig17-controller-board.jpg` | 5 电气连接 步骤 3（控制板端，三条线各标作用） |
 | 图 18 | `fig18-arm-connector.jpg` | 5 电气连接 步骤 3（机械臂端） |
 | 图 19 | `fig19-electrical-overall.jpg` | 5.1 电气连接示意图 |
+| 图 20 | `fig20-activation.png` | 6.2 激活（授权激活页面截图） |
+| 图 21 | `fig21-console.png` | 6.3 使用（上位机控制台截图） |
 
 图 16 与图 17 是同一根线缆的两端：图 16 拍电源模块一侧的 XT60 输出，图 17 拍控制板
 一侧的黄头 XT60 输入。裁切后画面对不上「控制板」了，图注就只写所见，别再回头
@@ -167,24 +172,28 @@ pip install --target build/.tools python-docx pypandoc_binary
 
 `images/parts/` 里因此有 `fig05-control-board.jpg` / `fig17-controller-board.jpg`
 和 `fig11-arm-direct.jpg` / `fig12-column-routing.jpg` 各两份内容相同的源图，
-`LABELS` 不同——**两处要改的是同一个判断，别只改一份**。两份输出各自按所在图号
-命名，`figNN ↔ 图 N` 的对应关系不破。
+`LABELS_ZH` / `LABELS_EN` 不同——**两处要改的是同一个判断，别只改一份**。两份输出
+各自按所在图号命名，`figNN ↔ 图 N` 的对应关系不破。
 
 图 11 / 图 12 这份来自用户重写后的 docx：docx 把 image14 在步骤 7、步骤 8 各用了一次，
 但两次都没有配图注。所以「两张各占一个图号」是 md 这边补的编号与图注，
 docx 里对不上号是正常的。
 
-`images/parts/` 存的是**所有带标注的原图**，`images/*.jpg` 全部由脚本生成：
+`images/parts/` 存的是**所有带标注的原图**，`images/fig01`–`fig19` 与
+`images-en/fig01`–`fig19` 全部由脚本生成。图 20、图 21 是上位机界面截图
+（2880×1710 PNG，已裁掉顶栏的调试标签），直接放进 `images/` 与 `images-en/`，
+不经过 `compose_figures.py`，重新截图时覆盖同名文件即可。
 
 | 类型 | 图 | 处理 |
 | --- | --- | --- |
 | 拼接 | 图 6 / 7 | 多张照片并排拼成一张（`FIGURES`） |
-| 单张 | 其余 17 张 | 不拼接，只裁切＋重画标注（`SINGLES`） |
+| 单张 | 图 1–5、8–19 | 不拼接，只裁切＋重画标注（`SINGLES`） |
+| 截图 | 图 20 / 21 | 界面截图，原样使用，不裁切、不标注 |
 
 图 10 本来是 `fig10a/b/c` 三张并排（整体遥操形态、延长件装配、机械臂装至延长件），
 用户只要中间那延长件一张，于是它从 `FIGURES` 挪到了 `SINGLES`，输出名也跟着从
 `fig10-teleop.jpg` 改成 `fig10-extension.jpg`。两张不要的分图源图还留在 `parts/`，
-`LABELS` 里不再有它们的标注（要恢复就把 `FIGURES` 里的三张并排加回来）。
+`LABELS_ZH` / `LABELS_EN` 里不再有它们的标注（要恢复就把 `FIGURES` 里的三张并排加回来）。
 
 `images/parts/` 里还留着几张没人引用的图：
 
@@ -208,9 +217,9 @@ python3 build/compose_figures.py
 ### 图内标注重画
 
 照片里烙死的标注字只有约 20px 高、又是半透明浅红压在花灰地毯或黑铁件上，
-缩到版心宽度后约 8pt，印出来认不出。所以 `compose_figures.py` 里的 `LABELS_ZH` /
-`LABELS_EN` 会把指定图上的旧字 **inpaint 抹掉、重画**成「深红字 + 白描边」，
-需要指哪里的再加一条细红箭头：
+缩到版心宽度后约 8pt，印出来认不出。所以 `compose_figures.py` 里的
+`LABELS_ZH` / `LABELS_EN` 会把指定图上的旧字 **inpaint 抹掉、重画**成
+「深红字 + 白描边」，需要指哪里的再加一条细红箭头：
 
 ```python
 #                   字号(px)  擦除旧字框        新字左上角   文字          箭头 起→终
@@ -282,9 +291,10 @@ px = 8.9 × 成图宽度(px) ÷ 364.5   ≈   成图宽度(px) ÷ 41
 
 ## 改内容
 
-- 正文内容、章节顺序、图文位置：改 `LITEARM-SE机械臂安装教程.md`
+- 正文内容、章节顺序、图文位置：改 `LITEARM-SE机械臂使用教程.md`（英文版同步改
+  `LITEARM-SE-user-guide.md`，章节、步骤、图号与中文版一一对应）
 - 封面文字与坐标、目录、正文页码起算：改 md 顶部的 `{=latex}` 前置块
-- 页眉文字：改 `build.sh` 里的 `DOCSHORT`
+- 页眉文字：改 `build.sh` 里 `build_doc` 调用传入的册名（第二个参数）
 - 字体、页边距、行距、标题字号：改 `build/a3_layout.tex`
 - 目录条目间距：改 `build/a3_layout.tex` 的 `\l@section` / `\l@subsection`
 - 页脚文字：改 `build/a3_layout.tex` 的 `\fancyfoot` 两行
@@ -293,7 +303,7 @@ px = 8.9 × 成图宽度(px) ÷ 364.5   ≈   成图宽度(px) ÷ 41
 
 字体和行距与 SE 手册**完全一致**（实测：目录条目位置、字号、行距逐项相同；
 本文档出现的「字体+字号」组合是 SE 手册的子集）。`a3_style_prod.tex` 与房式
-原件逐字相同，未作改动。只有下面三处是为了适配「安装教程」这类要边看图边
+原件逐字相同，未作改动。只有下面三处是为了适配「使用教程」这类要边看图边
 操作的文档而有意改动的（前两处是样式取舍，第三处是缺陷修复）：
 
 | 位置 | 房式原件 | 本教程 | 原因 |
@@ -324,7 +334,11 @@ px = 8.9 × 成图宽度(px) ÷ 364.5   ≈   成图宽度(px) ÷ 41
 要整本还原 SE 手册观感，把上表**前两处**改回左列的值即可（第三处是缺陷修复，
 建议保留）。
 
-### 实测排版结果（16 页）
+### 实测排版结果（16 页旧版）
+
+下面的测量来自还没有第 7 章、正文 6 章的旧版，页底空白数据已经不能对应当前
+20 页的版本；保留它是为了记住当时为了压页数试过哪些退路。重新量之前不要把
+表中的页号当成现状。
 
 量法：把每页渲染成 150dpi 灰度图，取「最后一行墨迹」到版心底部（756.9pt）的距离。
 
@@ -373,21 +387,8 @@ px = 8.9 × 成图宽度(px) ÷ 364.5   ≈   成图宽度(px) ÷ 41
 也就是说 15 页只在「图 10 回到 163pt 左右的高度」时才成立，而那要求三张并排或
 干脆不放这张图。**要并回 15 页，能动的不是裁切而是版式**：图 10 与图 11 并成一张
 两栏图，或者收紧 `a3_layout.tex` 的 `\setkeys{Gin}{width=}`——后一条要把
-`compose_figures.py` 里所有 `LABELS` 的字号按新宽度整体重算，不是只改一个数。
-
-### 英文版的分页（17 页）
-
-同一套版式、同样 19 张图、同样大小，英文版只多一页：封面与目录各一页不变，正文从
-14 页变 15 页，多出来的就是英文正文比中文长的那一截。同样的量法：
-
-```
-页底空白(pt)，第 1–17 页
-  9  415  45  154  174  27  284  8  5  221  27  19  142  6  23  106  408
-```
-
-正文页（第 3 页起）合计空白 1649pt，中文版同口径 1481pt。留白最大的几页同样是
-`H` 的固有代价——下一张图放不进当前页剩余空间、整页下移——与中文版同因，
-不是英文排版特有的问题。
+`compose_figures.py` 里所有 `LABELS_ZH` / `LABELS_EN` 的字号按新宽度整体重算，
+不是只改一个数。
 
 ### 标题防孤行的坑
 
@@ -405,18 +406,15 @@ px = 8.9 × 成图宽度(px) ÷ 364.5   ≈   成图宽度(px) ÷ 41
 ## 几个容易踩的点
 
 - **图注不要自己写「图 N」**。`a3_layout.tex` 用
-  `\DeclareCaptionLabelFormat{a3}{图#2. }`（英文版是 `Figure #2. `）自动编号，
-  图片 alt 文字里带上「图 N」会渲染成「图 1. 图 1 电气连接示意图」。
-- **改 `build.sh` 的 pandoc 参数时，`-V geometry:` 一个字都不能漏**。重写这个脚本时
-  漏掉了 `bottom=30mm`，版心下沿跟着变，中文版从 16 页涨到 17 页、图 4 起全部下移
-  一页，而 xelatex 一声不响。这类「改了却没报错」的后果只能靠比页面发现，所以
-  **改完 `build.sh` 要重出中文版并与上一版逐页比对**（见「英文版」一节的做法）。
+  `\DeclareCaptionLabelFormat{a3}{图#2. }` 自动编号，图片 alt 文字里带上
+  「图 N」会渲染成「图 1. 图 1 电气连接示意图」。
 - **表格不要写标题**。pandoc 会把 `: 表 1 装箱清单` 渲染成英文的
   `Table 2: 表 1 装箱清单`。房式做法是不给表格加标题，改用引导句
   （如「装箱清单如下：」），正文里也不用「表 N」回指，改说「上表」。
-- **图片尺寸**由 `\setkeys{Gin}{width=0.70\linewidth,height=0.52\textheight,...}`
-  统一控制，Markdown 里不用再写 `{width=...}`。改了这里的宽度，别忘了同步
-  `compose_figures.py` 的 `LABELS` 字号（见上「图内标注重画」）。
+- **图片尺寸**默认由 `\setkeys{Gin}{width=0.70\linewidth,height=0.52\textheight,...}`
+  统一控制，Markdown 里只有图 20、21 这两张界面截图写了 `{width=100%}`（铺满版心；
+  Word 端由 `build_docx.py` 的 `FULL_WIDTH_FIGURES` 对应处理）。改了默认宽度，别忘了
+  同步 `compose_figures.py` 的 `LABELS_ZH` / `LABELS_EN` 字号（见上「图内标注重画」）。
 - **图就地排版，但仍可能被挤到下一页**。本教程用 `\def\fps@figure{H}`，图紧跟
   其说明文字；但一整张图放不进当前页剩余空间时，仍会整页移到下一页，在页底留下
   空白。所以正文里**不要写「下图」「以下」**这类方向性说法，统一用「图 N」回指。

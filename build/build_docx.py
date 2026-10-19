@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""把 LITEARM-SE 机械臂安装教程.md 转成可直接编辑的 Word 文档。
+"""把 LITEARM-SE 机械臂使用教程.md 转成可直接编辑的 Word 文档。
 
 流程：md（去掉 latex 原始块）-> pandoc -> docx -> python-docx 补封面/样式/题注。
 
 用法：
     python3 build/build_docx.py
 输出：
-    LITEARM-SE机械臂安装教程.docx
+    LITEARM-SE机械臂使用教程.docx
 """
 
 import os
@@ -33,8 +33,8 @@ from docx.oxml.ns import qn  # noqa: E402
 from docx.shared import Cm, Pt, RGBColor  # noqa: E402
 from PIL import Image  # noqa: E402
 
-SRC_MD = os.path.join(ROOT, "LITEARM-SE机械臂安装教程.md")
-OUT_DOCX = os.path.join(ROOT, "LITEARM-SE机械臂安装教程.docx")
+SRC_MD = os.path.join(ROOT, "LITEARM-SE机械臂使用教程.md")
+OUT_DOCX = os.path.join(ROOT, "LITEARM-SE机械臂使用教程.docx")
 
 # ---- 版式参数（对齐 PDF 设计：思源宋体正文、灰白细线表格）------------------
 FONT_EA_BODY = "宋体"          # 等价于 PDF 的 Noto Serif CJK SC
@@ -53,6 +53,10 @@ CALLOUT_SHADE = "F5F5F5"
 # 按 pandoc 给的原尺寸做单向缩小会让各图大小差异很大。
 MAX_IMG_W = Cm(12.9)
 MAX_IMG_H = Cm(12.0)
+# 两张上位机界面截图铺满版心。Word 默认 A4 + 2.54cm 页边距下可用宽约
+# 15.9cm，按这个宽度排，换到别的默认页面设置里也不会越出版心。
+FULL_IMG_W = Cm(15.9)
+FULL_WIDTH_FIGURES = {"授权激活页面", "上位机控制台"}
 
 
 # --------------------------------------------------------------------------
@@ -205,7 +209,7 @@ def prepare_markdown():
     if body == src:
         print("  ! 未匹配到 latex 块，请检查文档开头的 ```{=latex} 围栏")
     os.makedirs(GEN, exist_ok=True)
-    md = os.path.join(GEN, "LITEARM-SE机械臂安装教程.docx.md")
+    md = os.path.join(GEN, "LITEARM-SE机械臂使用教程.docx.md")
     with open(md, "w", encoding="utf-8") as f:
         f.write(body)
     return md
@@ -247,6 +251,13 @@ def style_document(doc):
 
     # 列表项（Compact）不要段后距，否则条目之间空得厉害
     set_para(st["Compact"], after=2, line=1.35)
+
+    # 命令块：左缩进 2 字符，行距收紧，只在下方留段距
+    if "Source Code" in [s.name for s in st]:
+        sc = st["Source Code"]
+        set_para(sc, before=0, after=6, line=1.15,
+                 align=WD_ALIGN_PARAGRAPH.LEFT)
+        sc.paragraph_format.left_indent = Pt(21)
 
     # 标题：对齐 PDF —— 正文同族衬线加粗
     heads = {
@@ -329,6 +340,10 @@ def fit_images(doc):
         w, h = shape.width, shape.height
         if not w or not h:
             continue
+        if (shape._inline.docPr.get("descr") or "") in FULL_WIDTH_FIGURES:
+            shape.width = FULL_IMG_W
+            shape.height = int(FULL_IMG_W * h / w)
+            continue
         scale = min(MAX_IMG_W / w, MAX_IMG_H / h)
         shape.width = int(w * scale)
         shape.height = int(h * scale)
@@ -341,6 +356,14 @@ def fit_images(doc):
             p.paragraph_format.space_before = Pt(6)
             p.paragraph_format.space_after = Pt(0)
             p.paragraph_format.line_spacing = 1.0
+
+
+def tighten_code_blocks(doc):
+    """命令块上方不留空：去掉前一段的段后距，只在块下方留段距。"""
+    paras = doc.paragraphs
+    for i, p in enumerate(paras):
+        if p.style.name == "Source Code" and i:
+            paras[i - 1].paragraph_format.space_after = Pt(0)
 
 
 def number_captions(doc):
@@ -445,7 +468,7 @@ def add_cover(doc):
         return keep(p)
 
     pic(os.path.join(ROOT, "images", "cover_litearm_logo.png"), 100, before=41)
-    text("安装教程", 28, FONT_EA_SANS, bold=True, before=24, after=0)
+    text("使用教程", 28, FONT_EA_SANS, bold=True, before=24, after=0)
     pic(os.path.join(ROOT, "images", "cover_litearm_se.png"), 289.1, before=21)
     text("NEXFORM ROBOTICS", 11, FONT_EA_SANS, bold=True, before=121, spacing=30)
     text("版本：V1.0　　日期：2026年10月13日", 9, FONT_EA_SANS, before=15,
@@ -484,7 +507,7 @@ def add_breaks_and_furniture(doc):
     hp = sec.header.paragraphs[0]
     hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     hp.paragraph_format.space_after = Pt(0)
-    r = hp.add_run("LITEARM-SE 机械臂安装教程")
+    r = hp.add_run("LITEARM-SE 机械臂使用教程")
     r.font.size = Pt(8.5)
     r.font.color.rgb = RGBColor.from_string("808080")
     rf = r._r.get_or_add_rPr().get_or_add_rFonts()
@@ -522,7 +545,7 @@ def verify(doc):
     texts = ["".join(t.text or "" for t in k.iter(qn("w:t"))) for k in head]
     imgs = [len(k.findall(".//" + qn("w:drawing"))) for k in head]
     assert imgs[0] == 1 and imgs[2] == 1, f"封面图片缺失：{imgs}"
-    assert "安装教程" in texts[1], f"封面标题错位：{texts}"
+    assert "使用教程" in texts[1], f"封面标题错位：{texts}"
     assert "NEXFORM" in texts[3], f"封面署名错位：{texts}"
     print(f"  自检通过：封面 {' | '.join(t for t in texts[:4] if t)}")
 
@@ -540,6 +563,7 @@ def main():
 
     print("4/6 图片、题注、表格 …")
     fit_images(doc)
+    tighten_code_blocks(doc)
     number_captions(doc)
     style_tables(doc)
 
@@ -548,7 +572,7 @@ def main():
     add_breaks_and_furniture(doc)
     verify(doc)
 
-    doc.core_properties.title = "LITEARM-SE 机械臂安装教程"
+    doc.core_properties.title = "LITEARM-SE 机械臂使用教程"
     doc.core_properties.author = "NEXFORM ROBOTICS"
 
     print("6/6 保存 …")

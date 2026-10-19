@@ -102,6 +102,9 @@
 \AtBeginEnvironment{table}{\small}
 \AtBeginEnvironment{verbatim}{\footnotesize}
 \AtBeginEnvironment{Shaded}{\footnotesize}
+% 命令块：整体左缩进 2em；去掉与上一段之间的段距，只在下方保留段距
+\AtBeginDocument{\fvset{xleftmargin=2em}}
+\AtBeginEnvironment{Shaded}{\vspace{-\parskip}}
 
 % ===== 页眉页脚（仿 A3）=====
 \fancypagestyle{frontmatter}{%

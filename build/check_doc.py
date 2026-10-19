@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""Check both installation guides' structural invariants. Run before every commit.
+"""Check both usage guides' structural invariants. Run before every commit.
 
     python3 build/check_doc.py
 
 The two editions share one invariant that breaks silently and is expensive to
 notice by eye: LaTeX numbers the captions itself, from the order the figures appear
-in the Markdown, so the Nth figure of a document must be `images/figNN-*.jpg` in the
-Chinese edition and `images-en/figNN-*.jpg` in the English one. Renumber a figure's
+in the Markdown, so the Nth figure of a document must be `images/figNN-*` in the
+Chinese edition and `images-en/figNN-*` in the English one. Renumber a figure's
 file and the caption follows the file, but every "see **图 N**" / "see **Figure N**"
 back reference in the prose keeps pointing where it did before. This script fails on
 that mismatch, and on the smaller mistakes that surround it.
 
 The two editions are translations of one document, so they are also required to
-carry the same figures in the same order.
+carry the same figures in the same order. The nineteenth figure is a photograph and
+the twentieth and twenty-first are interface screenshots, but the rule is the same:
+a file renumbered after its caption was written breaks a back reference.
 
 Exit status is 0 when everything checks out, 1 with one line per problem.
 """
@@ -36,14 +38,14 @@ Doc = collections.namedtuple("Doc", "source figure_dir cited label directional")
 
 DOCS = (
     Doc(
-        source="LITEARM-SE机械臂安装教程.md",
+        source="LITEARM-SE机械臂使用教程.md",
         figure_dir="images",
         cited=re.compile(r"图\s*(\d+)"),
         label="图",
         directional=("下图", "上图", "如下图", "如上图", "左图", "右图"),
     ),
     Doc(
-        source="LITEARM-SE-installation-guide.md",
+        source="LITEARM-SE-user-guide.md",
         figure_dir="images-en",
         cited=re.compile(r"figure\s*(\d+)", re.IGNORECASE),
         label="Figure",
@@ -81,7 +83,7 @@ def check(doc, problems):
                 problems,
                 f"{doc.source}: {doc.label} {number}: figure {number} of the document "
                 f"is {target}, but its caption will be numbered {doc.label} {number}. "
-                f"Expected a file named {expected}*.jpg",
+                f"Expected a file named {expected}*",
             )
 
     # 2. No caption repeats a figure number: LaTeX writes "图 N." / "Figure N." itself.

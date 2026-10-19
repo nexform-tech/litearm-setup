@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 生成 LITEARM-SE 安装教程的 PDF：中文版与英文版各一份。
+# 生成 LITEARM-SE 机械臂使用教程的 PDF：中文版与英文版各一份。
 #
 # 排版沿用「技术文档/_build」的房式样式，与 LITEARM SE 产品手册一致：
 #   md -> pandoc tex -> zebra 斑马纹 -> breaktt -> xelatex ×3
@@ -87,7 +87,7 @@ PY
 }
 
 # 中文版：随产品交付的那份
-build_doc "LITEARM-SE机械臂安装教程" "LITEARM-SE 机械臂安装教程" "目录" "图#2. " "图" zh
+build_doc "LITEARM-SE机械臂使用教程" "LITEARM-SE 机械臂使用教程" "目录" "图#2. " "图" zh
 # 英文版：同一份文档的英文对照，图与图号与中文版一一对应
-build_doc "LITEARM-SE-installation-guide" "LITEARM-SE Installation Guide" \
+build_doc "LITEARM-SE-user-guide" "LITEARM-SE User Guide" \
   "Contents" "Figure #2. " "Figure" en

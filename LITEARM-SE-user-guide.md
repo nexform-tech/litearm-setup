@@ -142,7 +142,7 @@ With the column base assembled, the arm can go onto the column. There are two co
 
 ![Cable exiting below the column](images-en/fig13-cable-exit.jpg)
 
-> **Note**: the side-mount parameters depend on which way each arm is mounted. Both arms have their power cable pointing **straight up** (see the left arm in **Figure 14**): the left arm is mounted rotated 90° about the y axis, and the right arm -90°. The cable pointing **straight down** at the base of the right arm in **Figure 14** is the **joint connector cable**, not the power cable. Do not use it to tell which way an arm is mounted.
+> `\color{red}`{=latex}Note: the side-mount parameters depend on the mounting direction, so the mounting direction must be changed in the host software. When both arms' power cables point straight up, as shown in the figure, set the mounting direction to +y.`\color{black}`{=latex}
 
 ![Mounting direction of the left and right arms](images-en/fig14-arm-direction.jpg)
 

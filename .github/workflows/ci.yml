@@ -41,3 +41,6 @@ jobs:
       # Markdown change that caused it.
       - name: Check the guide's figures and back references
         run: python3 build/check_doc.py
+
+      - name: Test Feishu sync helpers
+        run: python3 -m unittest discover -s build -p "test_*.py"

@@ -13,7 +13,7 @@
   \node[anchor=center] at ($(current page.north west)+(298.75pt,-717.8pt)$)
       {{\fontsize{11}{14}\selectfont\bfseries NEXFORM ROBOTICS}};
   \node[anchor=center] at ($(current page.north west)+(298.75pt,-747.9pt)$)
-      {{\fontsize{9}{13}\selectfont Version 1.0\qquad 13 October 2026}};
+      {{\fontsize{9}{13}\selectfont Version 1.1\qquad 4 November 2026}};
 \end{tikzpicture}
 \end{titlepage}
 \pagenumbering{Roman}
@@ -40,7 +40,7 @@ LITEARM-SE can be installed in either of two ways. Pick the one that matches how
 
 ## Installation path
 
-You do **not** need both paths. Decide which mount you are using, then read according to this table: chapters 2, 5, and 6 apply either way, and the only choice is between chapter 3 and chapter 4. Read chapter 7 (Q&A) when you need it.
+You do **not** need both paths. Decide which mount you are using, then read according to this table: chapters 2, 5, and 6 apply either way, and the only choice is between chapter 3 and chapter 4. Read chapter 7 (Q&A) and Appendix A when you need them.
 
 | Chapter | Content | Tabletop mount | Column mount |
 | --- | --- | --- | --- |
@@ -51,6 +51,7 @@ You do **not** need both paths. Decide which mount you are using, then read acco
 | 5 | Electrical connection: power and communication (including installation notes) | Required | Required |
 | 6 | Software quick start: install, activate, and use | Required | Required |
 | 7 | Q&A: common questions | Optional | Optional |
+| Appendix A | End-effector installation: dexterous hand, holder, and gripper | As needed | As needed |
 
 - **Tabletop mount**: read chapters 2, 3, 5, and 6. **Skip chapter 4 entirely.**
 - **Column mount**: read chapters 2, 4, 5, and 6. **Skip chapter 3 entirely.**
@@ -145,6 +146,8 @@ With the column base assembled, the arm can go onto the column. There are two co
 > `\color{red}`{=latex}Note: the side-mount parameters depend on the mounting direction, so the mounting direction must be changed in the host software. When both arms' power cables point straight up, as shown in the figure, set the mounting direction to +y.`\color{black}`{=latex}
 
 ![Mounting direction of the left and right arms](images-en/fig14-arm-direction.jpg)
+
+See **Appendix A** for installing an end-effector (dexterous hand, holder, or gripper). Fit the end-effector before the electrical connection so that the cables are not strained by repeated assembly.
 
 # Electrical connection: power and communication
 
@@ -342,3 +345,33 @@ A: Normal control does not. Only the first activation needs a network connection
 A: On Ubuntu / Debian, run `sudo apt remove litearm-studio`. For the single-file build, delete the executable. Settings remain in `~/.config/litearm-studio/`; delete them manually if needed.
 
 Thank you for choosing the LITEARM-SE. Product documentation, software updates, and issue reporting are available at the company's code repositories: <https://github.com/nexform-tech>.
+
+# Appendix A: End-effector installation (dexterous hand, holder, gripper)
+
+The end flange accepts a dexterous hand, a holder, or a gripper. All three are secured through the four countersunk holes in the flange with four M3×6 countersunk hex screws. Power off before installation, and make sure the flange face and the tool mounting face are clean, free of burrs, and free of foreign matter.
+
+Align the cable slot at the end of the arm with the cable slot on the end-effector, tighten the four screws diagonally in turn, then check the cable route so that no cable can enter the joint or finger travel range.
+
+## Dexterous hand
+
+![Dexterous hand installation: four M3×6 countersunk screws lock the flange, cable slots aligned](images-en/fig22-dexterous-hand-mount.png)
+
+1. Seat the dexterous hand against the end flange and rotate it until the cable slots on both sides line up.
+2. Insert four M3×6 countersunk hex screws by hand, then tighten them diagonally in turn.
+3. Check that the hand's cable sits in the cable slot and is not pinched by the flange.
+
+## Holder
+
+![Holder installation: four M3×6 countersunk screws lock the flange, cable slots aligned](images-en/fig23-holder-mount.png)
+
+1. Seat the holder against the end flange and align the cable slots.
+2. Lock the flange with four M3×6 countersunk hex screws.
+3. Push the fingers through their full travel by hand and confirm there is no interference.
+
+## Gripper
+
+![Gripper installation: four M3×6 countersunk screws lock the flange, cable slots aligned](images-en/fig24-gripper-mount.png)
+
+1. Seat the gripper against the end flange and align the cable slots.
+2. Lock the flange with four M3×6 countersunk hex screws.
+3. Push the fingers through their full travel by hand, confirm there is no interference, and keep the cable clear of the finger travel range.

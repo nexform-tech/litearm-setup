@@ -95,6 +95,28 @@ python3 build/compose_figures.py
 python3 build/check_doc.py
 ```
 
+## 文档中心
+
+这份使用教程也会同步到飞书上的 NEXFORM 文档中心。没有单独的上传步骤：
+`build/build.sh` 生成 PDF，随提交一起入库，合并后几分钟内站点就会更新。
+
+1. 推送到 `main` 且改动 `*.pdf` 时，触发
+   `.github/workflows/notify-docs.yml`；它用 `nexform-docs-dispatch` 这个
+   GitHub App 换取短期令牌，向
+   [nexform-guide](https://github.com/nexform-tech/nexform-guide) 发送
+   `docs-updated` 事件。
+2. `nexform-guide` 运行 `scripts/sync_files.py`，按它 `files.yaml` 的清单从
+   拥有该文件的仓库下载，只提交字节有变化的那些。
+3. 它的 `Publish` 流程逐个比对飞书文件块与本地副本的 SHA-256，只重传不同的
+   那些，然后回读文档校验。
+
+每天 03:00 UTC 还会跑一遍第 2 步，所以即使某次事件丢了，最多晚一天。你这边
+不需要任何飞书凭据：跟飞书打交道的任务都在 CI 里跑。
+
+文件名是这两个仓库之间的关联键。原地重新构建教程不需要别的操作；新增、改名或
+删除 PDF 则需要同时在 `nexform-guide` 开 PR，改 `files.yaml` 和页面链接两处，
+否则站点会继续指向旧文件。
+
 ## 仓库结构
 
 ```text

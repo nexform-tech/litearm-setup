@@ -52,6 +52,8 @@ bash build/build.sh
 ```
 
 构建会用 Markdown 源文件重新生成仓库根目录下的两份 PDF，每份跑三遍 xelatex。
+封面日期取构建当天（md 里是 `@COVERDATE_ZH@` / `@COVERDATE_EN@` 占位符），版本号
+V1.x 手写；飞书文档中心表格里的「版本 · 日期」由 nexform-guide 的同步自动更新。
 
 | 依赖 | 说明 |
 | --- | --- |

@@ -13,7 +13,7 @@
   \node[anchor=center] at ($(current page.north west)+(298.75pt,-717.8pt)$)
       {{\fontsize{11}{14}\selectfont\bfseries NEXFORM ROBOTICS}};
   \node[anchor=center] at ($(current page.north west)+(298.75pt,-747.9pt)$)
-      {{\fontsize{9}{13}\selectfont Version 1.1\qquad 4 November 2026}};
+      {{\fontsize{9}{13}\selectfont Version 1.1\qquad @COVERDATE_EN@}};
 \end{tikzpicture}
 \end{titlepage}
 \pagenumbering{Roman}

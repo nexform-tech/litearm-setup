@@ -2,11 +2,11 @@
 # branch. Keeping them apart means a broken release never blocks a pull request,
 # and the reverse.
 #
-# The suite is build/check_doc.py: the guide's figure numbering is derived from the
-# order its images appear in the Markdown, so renumbering a file after the prose
-# has been written breaks a back reference with nothing to show for it. The script
-# is the only thing that catches it. It needs no third-party package, so there is
-# no install step.
+# Two suites, neither of which needs a third-party package, so there is no install
+# step. build/check_doc.py guards the figure numbering: it is derived from the order
+# the images appear in the Markdown, so renumbering a file after the prose has been
+# written breaks a back reference with nothing to show for it. build/test_*.py covers
+# the build helpers, such as the cover-date substitution.
 name: CI
 
 on:
@@ -41,3 +41,6 @@ jobs:
       # Markdown change that caused it.
       - name: Check the guide's figures and back references
         run: python3 build/check_doc.py
+
+      - name: Run the build helper tests
+        run: python3 -m unittest discover -s build -p 'test_*.py'

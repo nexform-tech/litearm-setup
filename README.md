@@ -64,7 +64,10 @@ bash build/build.sh
 ```
 
 Building rewrites both PDFs in the repository root from their Markdown sources, three
-xelatex passes each.
+xelatex passes each. The cover date is the build day (`@COVERDATE_ZH@` /
+`@COVERDATE_EN@` placeholders), the version number is written by hand, and the
+"Version · Date" column of the Feishu document tables is kept current by the
+nexform-guide sync.
 
 | Requirement | Notes |
 | --- | --- |

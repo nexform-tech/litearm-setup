@@ -11,6 +11,12 @@ bash build/build.sh
 
 一条命令出两份 PDF，每份三遍 xelatex。
 
+封面上的日期不是写死的：md 里是占位符 `@COVERDATE_ZH@` / `@COVERDATE_EN@`，构建时
+替换成构建当天（北京时间，如「2026年11月11日」/「11 November 2026」）。文档内容改了就
+重出 PDF，封面日期自然更新；文档中心表格里的「版本 · 日期」由 nexform-guide 的同步
+从封面读版本、从本仓库该 PDF 的最后一次提交取日期，不用手改。**版本号 V1.x 仍在 md 里
+手写**，只有文档改版时才需要动它。
+
 依赖：`pandoc`、`xelatex`（TeX Live）、`python3`，
 字体 Noto Serif CJK SC / Noto Sans CJK SC / Lato。
 

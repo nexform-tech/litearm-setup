@@ -45,6 +45,10 @@ for a, b in (("✅", "✓"), ("⚠️", "⚠"), ("📐", "图"), ("️", "")):
     t = t.replace(a, b)
 open(sys.argv[2], "w", encoding="utf-8").write(t)
 PY
+  # 封面日期取构建当天（北京时间）：文档改了重出 PDF，封面和文档中心表格里的
+  # 「版本 · 日期」自然跟着走；版本号 V1.x 仍由人改。nexform-guide 的同步从封面
+  # 读版本、从源仓库该文件的最后一次提交取日期。
+  python3 "$B/cover_date.py" "$GEN/$name.md"
 
   echo "[2/5] 组装排版头：$name"
   sed -e "s/@DOCSHORT@/${docshort}/g" \

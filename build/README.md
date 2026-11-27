@@ -161,7 +161,7 @@ pip install --target build/.tools python-docx pypandoc_binary
 | 图 16 | `fig16-power-output.jpg` | 5 电气连接 步骤 2 |
 | 图 17 | `fig17-controller-board.jpg` | 5 电气连接 步骤 3（控制板端，三条线各标作用） |
 | 图 18 | `fig18-arm-connector.jpg` | 5 电气连接 步骤 3（机械臂端） |
-| 图 19 | `fig19-electrical-overall.jpg` | 5.1 电气连接示意图 |
+| 图 19 | `fig19-electrical-overall.jpg` | 5.1 供电连接示意图 |
 | 图 20 | `fig20-activation.png` | 6.2 激活（授权激活页面截图） |
 | 图 21 | `fig21-console.png` | 6.3 使用（上位机控制台截图） |
 
@@ -191,7 +191,7 @@ pip install --target build/.tools python-docx pypandoc_binary
 | 图 16 | DSC01943 | 电源模块的 XT60 输出 |
 | 图 17 | DSC01927 | 控制板三路接线 |
 | 图 18 | DSC01933 | 机械臂下方接口 |
-| 图 19 | DSC01976 | 电源模块、控制板、USB 线与盘好的电源线 |
+| 图 19 | DSC01976 | 电源模块、控制板、USB 线与盘好的电源线（2026-11-26 又换成含制动泄放模块的新图：电源模块 → 制动泄放模块 → 控制板，无 USB 线） |
 
 **还留着旧照片的 4 张**（`images/parts/` 里对应的仍是老图，重拍后覆盖同名文件、
 按 `CROPS` 注释里的取景重裁即可）：图 10 延长件、图 11 机械臂直接装配、

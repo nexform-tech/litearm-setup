@@ -13,7 +13,7 @@
   \node[anchor=center] at ($(current page.north west)+(298.75pt,-717.8pt)$)
       {{\fontsize{11}{14}\selectfont\bfseries NEXFORM ROBOTICS}};
   \node[anchor=center] at ($(current page.north west)+(298.75pt,-747.9pt)$)
-      {{\fontsize{9}{13}\selectfont Version 1.1\qquad @COVERDATE_EN@}};
+      {{\fontsize{9}{13}\selectfont Version 1.2\qquad @COVERDATE_EN@}};
 \end{tikzpicture}
 \end{titlepage}
 \pagenumbering{Roman}
@@ -157,7 +157,7 @@ Do the electrical connection after the mechanical assembly is complete. This set
 
 ![Power cable connected to the power supply](images-en/fig15-power.jpg)
 
-**Step 2**: connect the XT60 output of the power supply to the controller board. If you did not order the power supply module, you can power the controller board from another supply; the connection is the same.
+**Step 2**: connect the XT60 output of the power supply to the brake bleed module, then connect the brake bleed module output cable to the controller board. If you did not order the power supply module, you can power the controller board from another supply; the connection is the same.
 
 ![The XT60 output of the power supply](images-en/fig16-power-output.jpg)
 
@@ -169,18 +169,18 @@ Do the electrical connection after the mechanical assembly is complete. This set
 
 **Step 4**: connect the controller board to the PC with the USB cable.
 
-## Wiring diagram
+## Power wiring diagram
 
-The cables and connectors correspond one-to-one with **Figure 19**.
+The power cables correspond one-to-one with **Figure 19**.
 
-![Overall wiring diagram](images-en/fig19-electrical-overall.jpg)
+![Power wiring diagram](images-en/fig19-electrical-overall.jpg)
 
 ## Wiring self-check
 
 Before you apply power, confirm each of these:
 
 - Every connector is fully seated, with no play and no partial contact.
-- Every cable goes to the right connector. Check them one by one against the labels in **Figure 19**.
+- Every power cable goes to the right connector. Check them one by one against the labels in **Figure 19**.
 - Cables are routed clear of the joints' range of motion, so that nothing is pinched or wound up while the arm moves.
 - All wiring is complete and confirmed correct. Only then apply power.
 
@@ -294,7 +294,7 @@ Once activation is complete, you can connect to and operate the arm. All of the 
 # Q&A
 
 **Q: What should I check before applying power?**
-A: Complete all wiring with the power off; make sure every connector is fully seated with no play; check each cable and connector against the labels in Figure 19; and route the cables clear of the joints' range of motion. Apply power only after all of this is confirmed.
+A: Complete all wiring with the power off; make sure every connector is fully seated with no play; check each power cable and connector against the labels in Figure 19; and route the cables clear of the joints' range of motion. Apply power only after all of this is confirmed.
 
 **Q: Can I still use the arm without the optional 600 W switching power supply?**
 A: Yes. Connect another suitable supply to the controller board the same way. Before connecting it, confirm that its specifications match what the controller board requires.
